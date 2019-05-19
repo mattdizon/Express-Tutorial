@@ -1,0 +1,16 @@
+1. add mongoose to index
+2. connect to server
+3. start server by running mongod in terminal
+4. add ability to read in json
+5. work on the route for the api
+
+in route
+1. require express and middleware
+2. create the CRUD routes
+3. create model/schema
+
+in models
+1.  require mongoose
+2. create schema
+3. export model
+4. in the routes folder require the model created
