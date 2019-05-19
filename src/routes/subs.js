@@ -35,12 +35,17 @@ router.post(`/`,async(req,res) =>{
     }
 })
 //Update sub
-router.patch(`/:id`,(req,res) =>{
+router.patch(`/:id`,getSubscriber,(req,res) =>{
 
 })
 //Delete Sub
-router.delete(`/:id`,(req,res) =>{
-    req.params.id
+router.delete(`/:id`,getSubscriber, async (req,res) =>{
+    try {
+        await res.subscriber.remove()
+        res.json({message: 'Deleted User'})
+    } catch (e) {
+        res.status(500).json({message: e.message})
+    }
 })
 
 // crete a middleware function to get subcriber for the id functions
