@@ -16,8 +16,8 @@ router.get(`/`, async(req,res) =>{
 
 })
 //Get one sub
-router.get(`/:id`,(req,res) =>{
-    res.send(req.params.id)
+router.get(`/:id`,getSubscriber,(req,res) =>{
+    res.json(res.subscriber)
 })
 //Create sub
 router.post(`/`,async(req,res) =>{
@@ -42,4 +42,18 @@ router.patch(`/:id`,(req,res) =>{
 router.delete(`/:id`,(req,res) =>{
     req.params.id
 })
+
+// crete a middleware function to get subcriber for the id functions
+async function getSubscriber(req, res, next){
+    let subscriber
+    try {
+        subscriber = await Subscriber.findById(req.params.id)
+        if(subscriber == null)
+        return res.status(404).json({message:'user not found'})
+    } catch (e) {
+        return res.status(500).json({message:e.message})
+    }
+    res.subscriber = subscriber
+    next()
+}
 module.exports = router
