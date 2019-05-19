@@ -4,46 +4,61 @@
 const express = require('express')
 //express return value is object of type express
 const app = express()
-let personRoute = require(`./routes/person`)
+// let personRoute = require(`./routes/person`)
 let path = require(`path`)
 
 //we need to link mongoose
 const mongoose = require('mongoose')
 //connect mongoose to db
 mongoose.connect('mongodb://localhost/subs',{useNewUrlParser:true})
+const db = mongoose.connection
+//events to know if mongo is connected
+db.on('error',(error) => console.error(error))
+db.once(`open`, () => console.log(`Connected to DB`))
+
+
+
+// set up server to accept json as body
+app.use(express.json())
+
+
+// set up routes
+const subscribeRouter = require(`./routes/subs`)
+app.use(`/subscribers`, subscribeRouter)
+
 // order of handlers added matters
 // we want to print incoming req first to catch everything coming in
 //middleware func take 3 param req, res, next
 //next is ref to next function in pipeline
-app.use((req,res,next) =>{
-    console.log(`${new Date().toString()} => ${req.originalUrl}`);
-
-    next()
-})
-// these are functions in the pipeline chain
-app.use(personRoute)
-app.use(express.static('public'))
-
-
-app.get("/people",(req, resp)=> {
- resp.send(["bob","jim","joe"])
- })
-
- app.get("/people/:person",(req, resp)=> {
- resp.send(`Hello ${req.params.person}`)
- })
-
-//handler for 404
-app.use ((req,res,next) =>{
-    res.status(404).send(`Your lost`)
-})
-
-//handler for 500
-//takes 4 param
-app.use((err,req,res,next)=>{
-    console.error(err.stack)
-    res.sendFile(path.join(__dirname, `../public/500.html`))
-})
+// app.use((req,res,next) =>{
+//     console.log(`${new Date().toString()} => ${req.originalUrl}`);
+//
+//     next()
+// })
+// // these are functions in the pipeline chain
+// app.use(personRoute)
+// app.use(express.static('public'))
+//
+//
+// app.get("/people",(req, resp)=> {
+//  resp.send(["bob","jim","joe"])
+//  })
+//
+//  app.get("/people/:person",(req, resp)=> {
+//  resp.send(`Hello ${req.params.person}`)
+//  })
+//
+// //handler for 404
+// app.use ((req,res,next) =>{
+//     res.status(404).send(`Your lost`)
+// })
+//
+// //handler for 500
+// //takes 4 param
+// app.use((err,req,res,next)=>{
+//     console.error(err.stack)
+//     res.sendFile(path.join(__dirname, `../public/500.html`))
+// })
 
 
 
